@@ -1,0 +1,116 @@
+project:
+  name: reserve_monitoring
+  reporting_unit: mln_byn
+  top_n_movements: 50
+  large_movement_threshold_mln: 1.0
+  export_daily_excel: true
+
+paths:
+  raw_dir: data/raw
+  processed_daily_dir: data/processed/daily
+  processed_movements_dir: data/processed/movements
+  qlik_dir: data/qlik
+  reports_dir: data/reports
+  logs_dir: data/logs
+
+input:
+  sheet_name: 0
+  duplicate_policy: error
+  monetary_values_in_byn: true
+  exchange_rate_column: Курс
+  key_columns:
+    - ID CRM клиента
+    - Источник данных
+    - Номер договора
+    - Номер транша
+
+columns:
+  report_date: Отчетная дата
+  crm_id: ID CRM клиента
+  unp: УНП клиента
+  client_name: Наименование клиента
+  source: Источник данных
+  contract_number: Номер договора
+  tranche_number: Номер транша
+  industry: Отрасль клиента
+  subportfolio: Субпортфель
+  business_segment: Бизнес-сегмент
+  risk_segment: Риск-сегмент
+  stage: Стадия
+  rating: Рейтинг на отчетную дату
+  default_date: Дата дефолта
+  overdue_days_contract: Макс Кол-во дней просрочки по договору
+  overdue_days_client: Макс Кол-во дней просрочки по клиенту
+  overdue_bucket: Бакет просрочки по договору
+  ead: EAD
+  pd_contract: PD по договору
+  pd_pit: PD PIT
+  pd_lt_max: PD LT max
+  macro_addon: Макронадбавка
+  ccf: ССF
+  lgd: LGD
+  lgd_lr: LGD LR
+  lgd_id: LGD ID
+  lgd_alt: LGD alt
+  individual_assessment: Индивидуальная оценка
+  currency: Валюта
+  fx_rate: Курс
+
+reserve_columns:
+  - Срочный долг резерв
+  - Срочные проценты резерв
+  - Просроченный долг резерв
+  - Просроченные проценты резерв
+  - Комиссия резерв
+  - Просроченная непроцентная комиссия резерв
+  - Просроченная процентная комиссия резерв
+  - Штрафы (пени) резерв
+  - УО резерв
+  - Внебаланс резерв
+  - Дисконт резерв
+  - Просроченный дисконт резерв
+  - Премия резерв
+  - Просроченная премия резерв
+  - Срочный долг цессии резерв
+  - Просроченный долг цессии резерв
+
+overdue_reserve_columns:
+  - Просроченный долг резерв
+  - Просроченные проценты резерв
+  - Просроченная непроцентная комиссия резерв
+  - Просроченная процентная комиссия резерв
+  - Штрафы (пени) резерв
+  - Просроченный дисконт резерв
+  - Просроченная премия резерв
+  - Просроченный долг цессии резерв
+
+monitor_dimensions:
+  - Стадия
+  - Риск-сегмент
+  - Бизнес-сегмент
+  - Субпортфель
+  - Отрасль клиента
+  - Рейтинг на отчетную дату
+  - Бакет просрочки по договору
+  - Валюта
+
+thresholds:
+  pd_relative_change: 0.20
+  pd_absolute_change: 0.01
+  lgd_absolute_change: 0.05
+  ead_relative_change: 0.10
+  ead_absolute_change_mln: 0.50
+  fx_relative_change: 0.01
+  reserve_jump_mln: 1.0
+
+# Укажите рейтинг от лучшего к худшему, если нужна классификация upgrade/downgrade.
+# Если список пуст, код помечает только RATING_CHANGED.
+rating_order: []
+
+# Порядок бакетов просрочки от лучшего к худшему. При иной шкале измените список.
+overdue_bucket_order:
+  - "0"
+  - "1-30"
+  - "31-60"
+  - "61-90"
+  - "90+"
